@@ -1,18 +1,10 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-require("dotenv").config();
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-console.log(__dirname);
-
-app.use(express.static(path.join(__dirname,'/frontend/build')))
-app.get('*',(req,res) => res.sendFile(path.join(__dirname,'/frontend/build/index.html')));
+dotenv.config();
 
 const app = express();
 
@@ -20,26 +12,27 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
- .then(() => console.log("MongoDB connected"))
- .catch((err) => console.log(err));
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
 
- const ItemSchema=new mongoose.Schema({name:String});
- const Item=mongoose.model("Item",ItemSchema);
+const ItemSchema = new mongoose.Schema({ name: String });
+const Item = mongoose.model("Item", ItemSchema);
 
- app.get("/api/item",async(req,res)=> {
-    const items=await Item.find();
-    res.json(items);
- });
- 
- app.post('/api/item',async(req,res)=> {
-    const newItem = new Item({name:req.body.name});
-    await newItem.save();
-    res.json(newItem);
- });
+app.get("/api/item", async (req, res) => {
+  const items = await Item.find();
+  res.json(items);
+});
 
- const PORT=process.env.PORT || 5000;
- app.listen(PORT,()=>console.log(`Server running on port ${PORT}`));
+app.post("/api/item", async (req, res) => {
+  const newItem = new Item({ name: req.body.name });
+  await newItem.save();
+  res.json(newItem);
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
